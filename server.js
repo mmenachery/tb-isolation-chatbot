@@ -18,7 +18,7 @@ const PROMPT_ID = process.env.OPENAI_PROMPT_ID;
 const VECTOR_STORE_ID = process.env.OPENAI_VECTOR_STORE_ID;
 
 app.post("/api/chat", async (req, res) => {
-  const { message, patientContext, structuredData } = req.body;
+  const { message, patientContext, structuredData, conversationHistory } = req.body;
   if (!message) return res.status(400).json({ error: "Message is required" });
 
   // Set up streaming headers
@@ -28,41 +28,59 @@ app.post("/api/chat", async (req, res) => {
   res.flushHeaders?.();
 
   try {
-    // Build the complete user message with patient context
-    let fullMessage = message;
+    // Build the user message with context ONLY for the current turn
+    // The patient context and structured data provide the baseline
+    // The conversationHistory maintains the dialogue
+    let contextMessage = "";
     
     if (patientContext || structuredData) {
-      fullMessage = `PATIENT CONTEXT:
+      contextMessage = `PATIENT CONTEXT:
 ${patientContext || 'None provided'}
 
 STRUCTURED DATA:
-- Pre-Treatment Bacterial Burden: ${structuredData?.bacterialBurden ?? 'N/A'}
-- Gene Xpert: ${structuredData?.geneXpert ?? 'N/A'}
-- Community Risk: ${structuredData?.communityRisk ?? 'N/A'}
-- Patient Harm: ${structuredData?.patientHarm ?? 'N/A'}
+- Pre-Treatment Bacterial Burden: ${structuredData?.bacterialBurden ?? 'Not provided'}
+- GeneXpert/Drug Susceptibility: ${structuredData?.geneXpert ?? 'Not provided'}
+- Community Risk: ${structuredData?.communityRisk ?? 'Not provided'}
+- Patient Harm: ${structuredData?.patientHarm ?? 'Not provided'}
+- Days on Treatment: ${structuredData?.treatmentDays ?? 'Not provided'}
+- Treatment Drugs: ${structuredData?.treatmentDrugs ?? 'Not provided'}
+- Treatment Tolerance: ${structuredData?.treatmentTolerance ?? 'Not provided'}
+- Drug Resistance Concern: ${structuredData?.drugResistance ?? 'Not provided'}
 
-USER QUESTION:
-${message}`;
+`;
     }
+
+    // Build messages array for OpenAI
+    // Include conversation history to maintain context
+    let messages = [];
+    
+    // If there's conversation history, include it
+    if (conversationHistory && conversationHistory.length > 0) {
+      messages = [...conversationHistory];
+    }
+    
+    // Add the current user message
+    const currentMessage = contextMessage + message;
+    messages.push({ role: "user", content: currentMessage });
 
     console.log("📝 Sending to TB-specialized prompt:", PROMPT_ID);
     console.log("📚 Using vector store:", VECTOR_STORE_ID);
-    console.log("💬 Full message being sent:\n", fullMessage);
+    console.log("💬 Conversation history length:", conversationHistory?.length || 0);
+    console.log("💬 Current message:\n", currentMessage);
     console.log("---");
 
     // Create a streaming response using the stored TB-specialized prompt ID
     const stream = await client.responses.create({
-      model: "o1",  // Using o1 reasoning model to support reasoning.effort parameter
+      model: "o1",
       stream: true,
       
       // Reference your TB-specialized prompt by ID
-      // This prompt should contain your TB domain expertise and instructions
       prompt: { id: PROMPT_ID },
       
-      // User's message with patient context
-      input: [{ role: "user", content: fullMessage }],
+      // Pass the full conversation with history
+      input: messages,
       
-      // File search tool with vector store containing TB guidelines/documents
+      // File search tool with vector store containing TB guidelines
       tools: [
         {
           type: "file_search",
@@ -74,6 +92,8 @@ ${message}`;
 
     // Stream the response back to the client
     for await (const event of stream) {
+      // Log events for debugging (can remove in production)
+      console.log("Event type:", event.type);
       
       // Handle different event types
       if (event.type === "response.output_text.delta") {
