@@ -51,31 +51,35 @@ export default function HomePage({ onGetStarted }) {
             </div>
 
             <div className="resource-item">
-              <a href="https://stacks.cdc.gov/view/cdc/22079" target="_blank" rel="noopener noreferrer">
-                <h4>CDC: TB Policy Handbook</h4>
+              <a href="https://360.articulate.com/review/content/441bc837-66ee-4e21-9b32-4029435f4b30/review" target="_blank" rel="noopener noreferrer">
+                <h4>TB Isolation Assistant Decision Support Tool</h4>
               </a>
-              <p>Tuberculosis control laws and policies : a handbook for public health and legal practitioners</p>
-              <a href="https://stacks.cdc.gov/view/cdc/22079" target="_blank" rel="noopener noreferrer">Learn More →</a>
+              <p>Decision support agent for Tuberculosis isolation based on NTCA guidelines</p>
+              <a href="https://360.articulate.com/review/content/441bc837-66ee-4e21-9b32-4029435f4b30/review" target="_blank" rel="noopener noreferrer">Learn More →</a>
             </div>
             
             <div className="resource-item">
-              <a href="https://academic.oup.com/jid/article/231/1/10/7814559?login=false" target="_blank" rel="noopener noreferrer">
+              <a href="https://academic.oup.com/jid/issue/231/1" target="_blank" rel="noopener noreferrer">
                 <h4>The Journal of Infectious Diseases</h4>
               </a>
-              <p>Assessing Infectiousness and the Impact of Effective Treatment to Guide Isolation Recommendations for People With Pulmonary Tuberculosis</p>
-              <a href="https://academic.oup.com/jid/article/231/1/10/7814559?login=false" target="_blank" rel="noopener noreferrer">Learn More →</a>
+              <p>Special Collection on TB Isolation</p>
+              <a href="https://academic.oup.com/jid/issue/231/1" target="_blank" rel="noopener noreferrer">Learn More →</a>
             </div>
             
             <div className="resource-item">
-              <h4>Resource Title 5</h4>
-              <p>Brief description of resource</p>
-              <a href="#" target="_blank" rel="noopener noreferrer">Learn More →</a>
+              <a href="https://tbcenter.jhu.edu/trac/" target="_blank" rel="noopener noreferrer">
+                <h4>Johns Hopkins Medicine TB Research Advancement Center</h4>
+              </a>
+              <p>Johns Hopkins Tuberculosis Research Advancement Center (TRAC)</p>
+              <a href="https://tbcenter.jhu.edu/trac/" target="_blank" rel="noopener noreferrer">Learn More →</a>
             </div>
             
             <div className="resource-item">
-              <h4>Resource Title 6</h4>
-              <p>Brief description of resource</p>
-              <a href="#" target="_blank" rel="noopener noreferrer">Learn More →</a>
+              <a href="https://rutgers.idcrowd.org/Account/Login" target="_blank" rel="noopener noreferrer">
+                <h4>Global TB Institute: TB Consultation</h4>
+              </a>
+              <p>Accessible TB Consultation based on location</p>
+              <a href="https://rutgers.idcrowd.org/Account/Login" target="_blank" rel="noopener noreferrer">Learn More →</a>
             </div>
             
           </div>
